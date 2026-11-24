@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "nisar-s1: NISAR L2 reading and L-band / C-band SAR comparison tools"
+type: software
+authors:
+  - family-names: Diallo
+    given-names: Mamadou Galy
+version: 0.4.0
+date-released: 2026-11-24
+license: Apache-2.0
+repository-code: "https://github.com/mamadou-g-diallo/nisar-s1"
+keywords:
+  - NISAR
+  - Sentinel-1
+  - SAR
+  - InSAR
+  - polarimetry
+  - ROSE-L
+  - ISCE3

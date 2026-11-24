@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.venv/
+.ipynb_checkpoints/
+# data and credentials never go in the repository
+*.h5
+*.tif
+*.dim
+*.data/
+.env
+.netrc
+out/

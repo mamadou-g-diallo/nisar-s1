@@ -1,0 +1,7 @@
+# Your own areas for the nisar-s1 command line:
+#   nisar-s1 sites --sites-file examples/sites.yaml
+#   export NISAR_S1_SITES=$PWD/examples/sites.yaml; nisar-s1 run --site landes_forest ...
+# bbox: lon_min, lat_min, lon_max, lat_max in WGS84 degrees.
+landes_forest:
+  bbox: [-0.95, 44.20, -0.85, 44.28]
+  label: "Landes maritime pine plantation (France)"
