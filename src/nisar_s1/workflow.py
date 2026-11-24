@@ -93,13 +93,16 @@ def read_index(out_dir) -> pd.DataFrame:
 
     Paths are stored as file names relative to the folder, so the folder can be moved or read
     from another working directory. Older indexes (absolute paths, or paths relative to the
-    directory the extraction was run from) are resolved the same way.
+    directory the extraction was run from) are resolved the same way. A file listed twice (older
+    indexes mixing absolute and relative paths after a second run) is kept once, with its last
+    entry, so that no date counts twice in the temporal medians.
     """
     out_dir = Path(out_dir).resolve()
     idx = pd.read_csv(out_dir / INDEX)
     idx["path"] = [str(p) if Path(p).is_absolute() and Path(p).exists() else str(out_dir / Path(p).name)
                    for p in idx["path"]]
-    return idx
+    name = idx["path"].map(lambda p: Path(p).name)
+    return idx[~name.duplicated(keep="last")].reset_index(drop=True)
 
 
 def _append_index(out_dir: Path, rows: list[dict]) -> pd.DataFrame:

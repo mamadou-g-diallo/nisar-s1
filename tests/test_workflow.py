@@ -203,3 +203,22 @@ def test_index_independent_of_working_directory(tmp_path, monkeypatch):
     idx = read_index(tmp_path / "moved")
     assert all(load_raster(p).data.size for p in idx["path"])
     assert len(temporal_medians(tmp_path / "moved")) == 2
+
+
+def test_index_with_duplicate_entries_counts_each_file_once(tmp_path):
+    """An index written by an older version (same file listed with an absolute and a relative
+    path) must not count a date twice."""
+    from nisar_s1.workflow import read_index, temporal_medians
+    cat = _catalog(tmp_path)
+    out = tmp_path / "out"
+    extract_nisar(BBOX, "2026-09-01", "2026-09-30", out, "GCOV", catalog=cat, say=lambda m: None)
+    idx = pd.read_csv(out / "files.csv")
+    dup = idx.iloc[[0]].copy()
+    dup["path"] = str(out / dup["path"].iloc[0])           # same file, absolute path
+    idx = pd.concat([idx, dup], ignore_index=True)
+    idx.to_csv(out / "files.csv", index=False)
+    clean = read_index(out)
+    assert len(clean) == len(idx) - 1
+    assert clean["path"].is_unique
+    n = {name.split("[n=")[1].rstrip("]") for name in temporal_medians(out)}
+    assert n == {str(len(clean) // 2)}

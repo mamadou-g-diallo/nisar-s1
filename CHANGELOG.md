@@ -2,6 +2,14 @@
 
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org).
 
+## [0.4.1] - 2026-11-24
+
+### Fixed
+- `workflow.read_index` keeps each file once. Indexes written by older versions could list
+  the same file twice (absolute path from a first run, relative path from a second run in the same
+  folder); that file then counted twice in `temporal_medians` and the `[n=...]` labels.
+  Results of folders extracted in a single run are unchanged.
+
 ## [0.4.0] - 2026-11-24
 
 First release as a standalone repository (previously developed inside the case-study repository
