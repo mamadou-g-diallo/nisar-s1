@@ -18,8 +18,8 @@ GRAPHS = Path(__file__).parent / "graphs"
 
 
 def render_graph(name: str, out_xml: Path, **variables) -> Path:
-    """Write graph ``name`` (``s1_coherence``, ``s1_gamma0``, ``s1_interferogram`` or ``s1_c2``) with
-    variables substituted."""
+    """Write graph ``name`` (``s1_coherence``, ``s1_coherence_radar``, ``s1_tc``, ``s1_gamma0``,
+    ``s1_interferogram`` or ``s1_c2``) with variables substituted."""
     tpl = string.Template((GRAPHS / f"{name}.xml").read_text())
     xml = tpl.substitute({k: str(v) for k, v in variables.items()})
     out_xml.parent.mkdir(parents=True, exist_ok=True)
@@ -66,6 +66,40 @@ def s1_coherence(ref_safe: Path, sec_safe: Path, out_dim: Path, swath: str, aoi_
                        cohWinAz=coh_win[1], pixel=pixel_m, crs=crs, region=region_wkt, out=tmp)
     run_gpt(xml, gpt, out_dim.with_suffix(".gpt.log"), label)
     _rename_dimap(tmp, out_dim)
+    return out_dim
+
+
+def s1_coherence_two_step(ref_safe: Path, sec_safe: Path, out_dim: Path, swath: str, aoi_wkt: str,
+                          region_wkt: str, gpt: str, pixel_m: float = 20.0, crs: str = "EPSG:32632",
+                          coh_win: tuple[int, int] = (10, 3), label: str = "", threads: int = 1,
+                          pols: str = "VV,VH") -> Path:
+    """Same product as :func:`s1_coherence`, in two gpt runs for machines with little memory.
+
+    Step 1 (``s1_coherence_radar``) computes the coherence in radar geometry and crops it to
+    ``region_wkt`` right after the deburst; step 2 (``s1_tc``) terrain-corrects that small product.
+    In one long graph, a small tile cache makes SNAP recompute the back-geocoding for every
+    terrain-correction tile, which can be ten times slower. ``pols="VV"`` halves the work (co-pol
+    coherence, the counterpart of the NISAR GUNW HH coherence). The radar product is deleted at the end.
+    """
+    if out_dim.exists():
+        print(f"{label} {out_dim.name}: already present", flush=True)
+        return out_dim
+    radar = out_dim.with_name(out_dim.stem + "_radar.dim")
+    if not radar.exists():
+        tmp = out_dim.with_name(out_dim.stem + "_radar_part.dim")
+        xml = render_graph("s1_coherence_radar", out_dim.with_name(out_dim.stem + "_radar.xml"),
+                           ref=_manifest(ref_safe), sec=_manifest(sec_safe), swath=swath.upper(), pols=pols,
+                           aoi=aoi_wkt, cohWinRg=coh_win[0], cohWinAz=coh_win[1], region=region_wkt, out=tmp)
+        run_gpt(xml, gpt, radar.with_suffix(".gpt.log"), f"{label} (1/2 radar)", threads=threads)
+        _rename_dimap(tmp, radar)
+    tmp = out_dim.with_name(out_dim.stem + "_part.dim")
+    xml = render_graph("s1_tc", out_dim.with_suffix(".xml"), src=radar, pixel=pixel_m, crs=crs,
+                       region=region_wkt, out=tmp)
+    run_gpt(xml, gpt, out_dim.with_suffix(".gpt.log"), f"{label} (2/2 terrain correction)", threads=threads)
+    _rename_dimap(tmp, out_dim)
+    import shutil
+    shutil.rmtree(radar.with_suffix(".data"), ignore_errors=True)
+    radar.unlink(missing_ok=True)
     return out_dim
 
 

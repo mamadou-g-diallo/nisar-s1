@@ -2,6 +2,15 @@
 
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org).
 
+## [0.4.2] - 2026-11-25
+
+### Added
+- `snap.s1_coherence_two_step`: Sentinel-1 coherence in two gpt runs (radar-geometry coherence cropped
+  after deburst, then terrain correction), for machines with little memory. On an 8 GB laptop one
+  pair took about 7 minutes instead of several hours with the single long graph. `pols="VV"` computes
+  the co-polarised coherence only (the counterpart of the NISAR GUNW HH coherence).
+- SNAP graphs `s1_coherence_radar` and `s1_tc`; tests of all coherence graph templates.
+
 ## [0.4.1] - 2026-11-24
 
 ### Fixed

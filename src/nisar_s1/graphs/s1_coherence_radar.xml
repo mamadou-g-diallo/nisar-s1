@@ -1,0 +1,33 @@
+<graph id="s1_coherence_radar">
+  <!-- No Enhanced-Spectral-Diversity: the site lies in one burst (no burst overlap to estimate it);
+       ESD corrects the azimuth phase ramp, not needed for coherence magnitude.
+       Step 1 of 2 (low-memory machines): coherence (VV, VH) in radar geometry, cropped to the region
+       after deburst; written to disk so that the terrain correction (s1_tc) does not recompute it.
+       Variables: ${ref} ${sec} ${swath} ${pols} ${aoi} ${cohWinRg} ${cohWinAz} ${region} ${out} -->
+  <version>1.0</version>
+  <node id="Read"><operator>Read</operator><parameters><file>${ref}</file></parameters></node>
+  <node id="Read2"><operator>Read</operator><parameters><file>${sec}</file></parameters></node>
+  <node id="Split"><operator>TOPSAR-Split</operator><sources><sourceProduct refid="Read"/></sources>
+    <parameters><subswath>${swath}</subswath><selectedPolarisations>${pols}</selectedPolarisations>
+      <wktAoi>${aoi}</wktAoi><enableSingleSwathMode>true</enableSingleSwathMode></parameters></node>
+  <node id="Split2"><operator>TOPSAR-Split</operator><sources><sourceProduct refid="Read2"/></sources>
+    <parameters><subswath>${swath}</subswath><selectedPolarisations>${pols}</selectedPolarisations>
+      <wktAoi>${aoi}</wktAoi><enableSingleSwathMode>true</enableSingleSwathMode></parameters></node>
+  <node id="Orb"><operator>Apply-Orbit-File</operator><sources><sourceProduct refid="Split"/></sources>
+    <parameters><orbitType>Sentinel Precise (Auto Download)</orbitType><continueOnFail>true</continueOnFail></parameters></node>
+  <node id="Orb2"><operator>Apply-Orbit-File</operator><sources><sourceProduct refid="Split2"/></sources>
+    <parameters><orbitType>Sentinel Precise (Auto Download)</orbitType><continueOnFail>true</continueOnFail></parameters></node>
+  <node id="BG"><operator>Back-Geocoding</operator><sources><sourceProduct refid="Orb"/><sourceProduct.1 refid="Orb2"/></sources>
+    <parameters><demName>Copernicus 30m Global DEM</demName><demResamplingMethod>BILINEAR_INTERPOLATION</demResamplingMethod>
+      <resamplingType>BISINC_5_POINT_INTERPOLATION</resamplingType><maskOutAreaWithoutElevation>true</maskOutAreaWithoutElevation></parameters></node>
+  <node id="Coh"><operator>Coherence</operator><sources><sourceProduct refid="BG"/></sources>
+    <parameters><cohWinRg>${cohWinRg}</cohWinRg><cohWinAz>${cohWinAz}</cohWinAz><subtractFlatEarthPhase>true</subtractFlatEarthPhase>
+      <subtractTopographicPhase>true</subtractTopographicPhase><demName>Copernicus 30m Global DEM</demName>
+      <squarePixel>true</squarePixel><singleMaster>true</singleMaster></parameters></node>
+  <node id="Deb"><operator>TOPSAR-Deburst</operator><sources><sourceProduct refid="Coh"/></sources>
+    <parameters><selectedPolarisations>${pols}</selectedPolarisations></parameters></node>
+  <node id="Crop"><operator>Subset</operator><sources><sourceProduct refid="Deb"/></sources>
+    <parameters><geoRegion>${region}</geoRegion><copyMetadata>true</copyMetadata></parameters></node>
+  <node id="Write"><operator>Write</operator><sources><sourceProduct refid="Crop"/></sources>
+    <parameters><file>${out}</file><formatName>BEAM-DIMAP</formatName></parameters></node>
+</graph>

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nisar_s1"
-version = "0.4.1"
+version = "0.4.2"
 description = "Read NISAR L2 products and compare L-band (NISAR, future ROSE-L) with C-band (Sentinel-1) SAR: coherence, backscatter, dual-pol polarimetry, change separability"
 readme = "README.md"
 requires-python = ">=3.11"

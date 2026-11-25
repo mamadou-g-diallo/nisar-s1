@@ -18,7 +18,7 @@ monitoring in France: see the case study
 ## Installation
 
 ```bash
-pip install "nisar_s1 @ git+https://github.com/mamadou-g-diallo/nisar-s1@v0.4.1"
+pip install "nisar_s1 @ git+https://github.com/mamadou-g-diallo/nisar-s1@v0.4.2"
 ```
 
 For development:
@@ -120,7 +120,7 @@ Continuous integration runs them on Python 3.11 and 3.12.
 If you use this package, please cite it (see [`CITATION.cff`](CITATION.cff)):
 
 > Diallo, M. G. (2026). *nisar-s1: NISAR L2 reading and L-band / C-band SAR comparison tools*
-> (version 0.4.1). https://github.com/mamadou-g-diallo/nisar-s1
+> (version 0.4.2). https://github.com/mamadou-g-diallo/nisar-s1
 
 ## Acknowledgements
 

@@ -1,0 +1,15 @@
+<graph id="s1_tc">
+  <!-- Step 2 of 2: terrain correction of a radar-geometry product (e.g. s1_coherence_radar) to a
+       projected grid, subset to the region. Variables: ${src} ${pixel} ${crs} ${region} ${out} -->
+  <version>1.0</version>
+  <node id="Read"><operator>Read</operator><parameters><file>${src}</file></parameters></node>
+  <node id="TC"><operator>Terrain-Correction</operator><sources><sourceProduct refid="Read"/></sources>
+    <parameters><sourceBands/><demName>Copernicus 30m Global DEM</demName><pixelSpacingInMeter>${pixel}</pixelSpacingInMeter>
+      <mapProjection>${crs}</mapProjection><imgResamplingMethod>BILINEAR_INTERPOLATION</imgResamplingMethod>
+      <nodataValueAtSea>false</nodataValueAtSea><saveSelectedSourceBand>true</saveSelectedSourceBand>
+      <saveLocalIncidenceAngle>true</saveLocalIncidenceAngle></parameters></node>
+  <node id="Sub"><operator>Subset</operator><sources><sourceProduct refid="TC"/></sources>
+    <parameters><geoRegion>${region}</geoRegion><copyMetadata>false</copyMetadata></parameters></node>
+  <node id="Write"><operator>Write</operator><sources><sourceProduct refid="Sub"/></sources>
+    <parameters><file>${out}</file><formatName>BEAM-DIMAP</formatName></parameters></node>
+</graph>
