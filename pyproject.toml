@@ -52,7 +52,7 @@ Homepage = "https://github.com/mamadou-g-diallo/nisar-s1"
 Repository = "https://github.com/mamadou-g-diallo/nisar-s1"
 Issues = "https://github.com/mamadou-g-diallo/nisar-s1/issues"
 Changelog = "https://github.com/mamadou-g-diallo/nisar-s1/blob/main/CHANGELOG.md"
-"Case study" = "https://github.com/mamadou-g-diallo/nisar-s1-forest-feasibility"
+"Case study" = "https://github.com/mamadou-g-diallo/nisar-s1-forest-france"
 
 [tool.setuptools.packages.find]
 where = ["src"]

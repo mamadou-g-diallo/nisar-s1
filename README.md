@@ -14,9 +14,9 @@ Three studies use the same pinned release, so each can be reproduced with the sa
 
 | Study | Repository |
 |---|---|
-| Clear-cuts and a forested landslide in France (Vosges, Morvan, Séchilienne), with [19 training notebooks](https://github.com/mamadou-g-diallo/nisar-s1-forest-feasibility/tree/main/training) applied to the Vosges site | [nisar-s1-forest-feasibility](https://github.com/mamadou-g-diallo/nisar-s1-forest-feasibility) |
-| Mangroves of the Saloum delta (Senegal), L vs C band and the tide at the pass | [nisar-s1-saloum-mangroves](https://github.com/mamadou-g-diallo/nisar-s1-saloum-mangroves) |
-| Spruce budworm defoliation in the Quebec boreal forest, Sentinel-1 time series | [sar-tbe-defoliation](https://github.com/mamadou-g-diallo/sar-tbe-defoliation) |
+| Clear-cuts and a forested landslide in France (Vosges, Morvan, Séchilienne), with [19 training notebooks](https://github.com/mamadou-g-diallo/nisar-s1-forest-france/tree/main/training) applied to the Vosges site | [nisar-s1-forest-france](https://github.com/mamadou-g-diallo/nisar-s1-forest-france) |
+| Mangroves of the Saloum delta (Senegal), L vs C band and the tide at the pass | [nisar-s1-mangroves-senegal](https://github.com/mamadou-g-diallo/nisar-s1-mangroves-senegal) |
+| Spruce budworm defoliation in the Quebec boreal forest, Sentinel-1 time series | [nisar-s1-budworm-canada](https://github.com/mamadou-g-diallo/nisar-s1-budworm-canada) |
 
 ## Installation
 

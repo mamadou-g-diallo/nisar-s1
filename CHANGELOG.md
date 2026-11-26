@@ -8,7 +8,7 @@ All notable changes are listed here. Versions follow [Semantic Versioning](https
 - `cband.common_orbit`: relative orbit present in the largest number of periods (years, seasons), so that
   multi-year Sentinel-1 comparisons keep the same viewing geometry.
 - `cband.rtc_composite`: per-pixel median (or mean) of several Sentinel-1 RTC scenes on a given grid, in
-  linear power. Used by the spruce budworm defoliation study (sar-tbe-defoliation), whose yearly
+  linear power. Used by the spruce budworm defoliation study (nisar-s1-budworm-canada), whose yearly
   composites it reproduces bit for bit.
 - `grid.make_grid(..., snap=False)`: grid starting exactly at the upper-left corner of the bounds.
 - Tests of these helpers (no network) and of `load_kit` with the `training/` layout.
@@ -37,7 +37,7 @@ All notable changes are listed here. Versions follow [Semantic Versioning](https
 ## [0.4.0] - 2026-11-24
 
 First release as a standalone repository (previously developed inside the case-study repository
-`nisar-s1-forest-feasibility`).
+`nisar-s1-forest-france`).
 
 ### Added
 - Apache-2.0 license, NOTICE, citation file, contributing guide.
