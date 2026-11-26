@@ -92,13 +92,17 @@ def load_site(name: str | Path, root: str | Path | None = None) -> dict[str, Any
 
 
 def load_kit(path: str | Path | None = None, root: str | Path | None = None) -> dict[str, Any]:
-    """Read the training-notebook configuration (default ``<root>/notebooks/kit_config.yaml``).
+    """Read the training-notebook configuration (default ``<root>/training/notebooks/kit_config.yaml``,
+    or ``<root>/notebooks/kit_config.yaml`` in older layouts).
 
     Adds resolved paths: ``data_dir`` (default ``<chemins.data_root>/kit``, created if needed),
     ``session_file``, ``gcov.local`` and ``gcov.url`` (granule substituted), and
     ``aoi.site_polygons`` made absolute. Data never go into the repository."""
     base = Path(root).expanduser().resolve() if root else project_root()
-    kit = _read_yaml(Path(path) if path else base / "notebooks" / "kit_config.yaml")
+    if path is None:
+        cands = [base / "training" / "notebooks" / "kit_config.yaml", base / "notebooks" / "kit_config.yaml"]
+        path = next((c for c in cands if c.exists()), cands[0])
+    kit = _read_yaml(Path(path))
     data = kit.get("data_dir") or Path(load_params(base / "config" / "params.yaml")["chemins"]["data_root"]) / "kit"
     data = Path(data).expanduser()
     data.mkdir(parents=True, exist_ok=True)

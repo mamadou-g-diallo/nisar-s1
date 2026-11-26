@@ -5,8 +5,8 @@ type: software
 authors:
   - family-names: Diallo
     given-names: Mamadou Galy
-version: 0.4.2
-date-released: 2026-11-25
+version: 0.5.0
+date-released: 2026-11-26
 license: Apache-2.0
 repository-code: "https://github.com/mamadou-g-diallo/nisar-s1"
 keywords:

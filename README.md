@@ -10,15 +10,18 @@ extraction on a common grid, coherence and backscatter statistics per land-cover
 polarimetry (C2 matrix, H/A/α, DpRVI, Stokes) and change separability (AUC, Cohen's d, block
 bootstrap).
 
-It was built for, and validated in, a feasibility study of clear-cut detection and forested-landslide
-monitoring in France: see the case study
-[nisar-s1-forest-feasibility](https://github.com/mamadou-g-diallo/nisar-s1-forest-feasibility)
-(results, reports and 19 executed training notebooks).
+Three studies use the same pinned release, so each can be reproduced with the same code:
+
+| Study | Repository |
+|---|---|
+| Clear-cuts and a forested landslide in France (Vosges, Morvan, Séchilienne), with 19 training notebooks | [nisar-s1-forest-feasibility](https://github.com/mamadou-g-diallo/nisar-s1-forest-feasibility) |
+| Mangroves of the Saloum delta (Senegal), L vs C band and the tide at the pass | [nisar-s1-saloum-mangroves](https://github.com/mamadou-g-diallo/nisar-s1-saloum-mangroves) |
+| Spruce budworm defoliation in the Quebec boreal forest, Sentinel-1 time series | [sar-tbe-defoliation](https://github.com/mamadou-g-diallo/sar-tbe-defoliation) |
 
 ## Installation
 
 ```bash
-pip install "nisar_s1 @ git+https://github.com/mamadou-g-diallo/nisar-s1@v0.4.2"
+pip install "nisar_s1 @ git+https://github.com/mamadou-g-diallo/nisar-s1@v0.5.0"
 ```
 
 For development:
@@ -120,7 +123,7 @@ Continuous integration runs them on Python 3.11 and 3.12.
 If you use this package, please cite it (see [`CITATION.cff`](CITATION.cff)):
 
 > Diallo, M. G. (2026). *nisar-s1: NISAR L2 reading and L-band / C-band SAR comparison tools*
-> (version 0.4.2). https://github.com/mamadou-g-diallo/nisar-s1
+> (version 0.5.0). https://github.com/mamadou-g-diallo/nisar-s1
 
 ## Acknowledgements
 

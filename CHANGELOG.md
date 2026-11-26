@@ -2,6 +2,21 @@
 
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org).
 
+## [0.5.0] - 2026-11-26
+
+### Added
+- `cband.common_orbit`: relative orbit present in the largest number of periods (years, seasons), so that
+  multi-year Sentinel-1 comparisons keep the same viewing geometry.
+- `cband.rtc_composite`: per-pixel median (or mean) of several Sentinel-1 RTC scenes on a given grid, in
+  linear power. Used by the spruce budworm defoliation study (sar-tbe-defoliation), whose yearly
+  composites it reproduces bit for bit.
+- `grid.make_grid(..., snap=False)`: grid starting exactly at the upper-left corner of the bounds.
+- Tests of these helpers (no network) and of `load_kit` with the `training/` layout.
+
+### Changed
+- `config.load_kit` looks for `training/notebooks/kit_config.yaml` first, then `notebooks/kit_config.yaml`
+  (layout of the reorganised forest case-study repository).
+
 ## [0.4.2] - 2026-11-25
 
 ### Added

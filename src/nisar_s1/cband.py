@@ -10,6 +10,7 @@ Sentinel-1 *coherence* still requires SLC processing (see :mod:`nisar_s1.snap`).
 from __future__ import annotations
 
 import time
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -67,6 +68,48 @@ def search_s1_rtc(bbox_wgs84, start: str, end: str, orbit_state: str | None = No
     if relative_orbit is not None:
         df = df[df.relative_orbit == relative_orbit]
     return df.sort_values("datetime").reset_index(drop=True)
+
+
+def common_orbit(scenes_by_period: dict) -> int:
+    """Relative orbit present in the largest number of periods (years, seasons...).
+
+    ``scenes_by_period`` maps a period to the table returned by :func:`search_s1_rtc`. Using one
+    relative orbit for every period keeps the incidence angle of each pixel constant, so that a
+    change between periods is not a change of viewing geometry."""
+    counts: dict[int, int] = {}
+    for df in scenes_by_period.values():
+        for o in set(df.relative_orbit) if len(df) else ():
+            counts[o] = counts.get(o, 0) + 1
+    if not counts:
+        raise ValueError("no scene in any period")
+    return max(counts, key=counts.get)   # first orbit with the highest count
+
+
+def rtc_composite(items, pol: str, grid: Raster, stat: str = "median",
+                  resampling: str = "bilinear") -> Raster:
+    """Per-pixel composite (``median`` or ``mean``) of several Sentinel-1 RTC scenes on ``grid``.
+
+    Each scene's ``pol`` asset (``"vv"`` or ``"vh"``, linear gamma0) is reprojected onto the grid,
+    then combined ignoring no-data. The result stays in linear power (NaN = no data). A median over
+    the scenes of a season reduces speckle and short-lived moisture effects."""
+    from rasterio.warp import reproject
+
+    h, w = grid.data.shape
+    stack = []
+    for it in items:
+        dst = np.full((h, w), np.nan, dtype="float32")
+        with rasterio.Env(**GDAL_ENV), rasterio.open(signed_href(it.assets[pol].href)) as src:
+            reproject(source=rasterio.band(src, 1), destination=dst, src_transform=src.transform,
+                      src_crs=src.crs, src_nodata=src.nodata, dst_transform=grid.transform,
+                      dst_crs=grid.crs, dst_nodata=np.nan, resampling=Resampling[resampling])
+        stack.append(dst)
+    if not stack:
+        raise ValueError("no scene to composite")
+    func = {"median": np.nanmedian, "mean": np.nanmean}[stat]
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)   # all-NaN pixels stay NaN
+        out = func(np.stack(stack), axis=0).astype("float32")
+    return Raster(out, grid.transform, grid.crs)
 
 
 def read_cog(href: str, bbox_wgs84=None, grid: Raster | None = None,

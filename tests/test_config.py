@@ -49,3 +49,17 @@ def test_missing_file_gives_a_clear_error(tmp_path, monkeypatch):
 def test_bbox_to_wkt_is_closed():
     wkt = config.bbox_to_wkt([0, 1, 2, 3])
     assert wkt == "POLYGON((0 1,2 1,2 3,0 3,0 1))"
+
+
+def test_load_kit_finds_training_layout(tmp_path):
+    from nisar_s1.config import load_kit
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config" / "params.yaml").write_text(f"chemins:\n  data_root: {tmp_path / 'data'}\n")
+    nb = tmp_path / "training" / "notebooks"
+    nb.mkdir(parents=True)
+    (nb / "kit_config.yaml").write_text(
+        "data_dir: null\ngcov:\n  granule: G1\n  url: https://x/{granule}.h5\n"
+        "aoi:\n  site_polygons: config/site.geojson\n")
+    kit = load_kit(root=tmp_path)
+    assert kit["gcov"]["url"] == "https://x/G1.h5"
+    assert kit["aoi"]["site_polygons"] == str(tmp_path / "config" / "site.geojson")

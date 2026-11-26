@@ -15,11 +15,19 @@ from rasterio.warp import Resampling, reproject
 from .raster import Raster
 
 
-def make_grid(bounds: tuple[float, float, float, float], res: float, crs: str) -> Raster:
-    """Empty (NaN) raster covering ``bounds`` (snapped outward to multiples of ``res``)."""
-    xmin, ymin = np.floor(bounds[0] / res) * res, np.floor(bounds[1] / res) * res
-    xmax, ymax = np.ceil(bounds[2] / res) * res, np.ceil(bounds[3] / res) * res
-    w, h = int(round((xmax - xmin) / res)), int(round((ymax - ymin) / res))
+def make_grid(bounds: tuple[float, float, float, float], res: float, crs: str, snap: bool = True) -> Raster:
+    """Empty (NaN) raster covering ``bounds``.
+
+    With ``snap`` (default) the corners are snapped outward to multiples of ``res``; with
+    ``snap=False`` the grid starts exactly at the upper-left corner ``(bounds[0], bounds[3])`` and
+    has ``ceil(extent / res)`` columns and rows."""
+    if snap:
+        xmin, ymin = np.floor(bounds[0] / res) * res, np.floor(bounds[1] / res) * res
+        xmax, ymax = np.ceil(bounds[2] / res) * res, np.ceil(bounds[3] / res) * res
+        w, h = int(round((xmax - xmin) / res)), int(round((ymax - ymin) / res))
+    else:
+        xmin, ymax = bounds[0], bounds[3]
+        w, h = int(np.ceil((bounds[2] - bounds[0]) / res)), int(np.ceil((bounds[3] - bounds[1]) / res))
     return Raster(np.full((h, w), np.nan, "float32"), Affine(res, 0, xmin, 0, -res, ymax),
                   rasterio.crs.CRS.from_user_input(crs))
 
